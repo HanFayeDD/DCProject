@@ -8,8 +8,8 @@ class Data():
     Params:
         code (list[str]): 股票代码
         sepdays (int): 时间间隔往前寻找的长度
-        begindays (str): 开始时间默认是当前日期
-        endays (str): 结束时间
+        begindays (str): 开始时间
+        endays (str): 结束时间默认是当前日期
     """
     code:list[str] = ['000001', '000002','000028',
                       '000004', '000050','000050',
@@ -53,6 +53,7 @@ class Data():
     @classmethod
     def get_data(cls):
         '''
+        根据类属性中的code获取数据
         Yields:
             pd.Dataframe:从akshare中获取的数据
         '''
