@@ -4,6 +4,6 @@ def mainpage1():
     '''
     第一页内容函数
     '''
-    Data().infoboard()
-    
+    Data.infoboard()
+
     
