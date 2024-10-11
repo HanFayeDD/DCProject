@@ -1,6 +1,7 @@
 import streamlit as st
+from page2.company_info import info
 
 def mainpage2():
-    st.title("page2")
-    st.write("page2")
-    st.button("page2")
+    st.title("Introdece")
+    info.get_info()
+    

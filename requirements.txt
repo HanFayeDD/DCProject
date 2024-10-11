@@ -2,3 +2,7 @@ streamlit==1.36.0
 pandas==2.0.3
 akshare==1.13.84
 numpy==1.23.5
+pygwalker==0.4.8.9
+pyecharts==2.0.5
+streamlit-echarts==0.4.0
+matplotlib== 3.7.2
