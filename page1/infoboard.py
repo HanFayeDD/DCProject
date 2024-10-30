@@ -34,20 +34,20 @@ class Data():
         row2 = st.columns(3)
         row3 = st.columns(3)
         cnt = 0
-        datagen = Data().get_data()
+        datagen = Data.get_data()
         for col in row1 + row2 + row3:
-            tile = col.container(height=Data().colheight)
+            tile = col.container(height=Data.colheight)
             tile.subheader(f"{Data.code[cnt]}")
             cnt += 1
             data = next(datagen)
             with tile:
                 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(["开盘收盘", "最高最低", "成交量", "成交额", "涨跌幅", "换手率"])
-                Data().draw_tab(tab1, data, 0, [1, 2])
-                Data().draw_tab(tab2, data, 0, [3, 4])
-                Data().draw_tab(tab3, data, 0, [5])
-                Data().draw_tab(tab4, data, 0, [6])
-                Data().draw_tab(tab5, data, 0, [8])
-                Data().draw_tab(tab6, data, 0, [10])
+                Data.draw_tab(tab1, data, 0, [2, 3])
+                Data.draw_tab(tab2, data, 0, [4, 5])
+                Data.draw_tab(tab3, data, 0, [6])
+                Data.draw_tab(tab4, data, 0, [7])
+                Data.draw_tab(tab5, data, 0, [9])
+                Data.draw_tab(tab6, data, 0, [11])
                     
                     
     @classmethod
@@ -60,7 +60,6 @@ class Data():
         '''
         for code in cls.code:
             try:
-                print(cls.begindays, cls.endays)
                 data = ak.stock_zh_a_hist(symbol=code, period="daily", 
                                         start_date=cls.begindays, 
                                         end_date=cls.endays, adjust="qfq")
@@ -84,9 +83,10 @@ class Data():
                 x=df.columns[x],
                 y=df.columns[y],
                 color= ["#FF0000"] if len(y)==1 else ["#FF0000", "#0000FF"],  # Optional
-                height=Data().chartheight,
+                height=Data.chartheight,
                 width=100
             )   
+        print(df.columns)
         
 
 
