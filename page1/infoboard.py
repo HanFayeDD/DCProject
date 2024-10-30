@@ -86,7 +86,6 @@ class Data():
                 height=Data.chartheight,
                 width=100
             )   
-        print(df.columns)
         
 
 
