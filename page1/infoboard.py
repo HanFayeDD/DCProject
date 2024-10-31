@@ -2,6 +2,7 @@ import streamlit as st
 import akshare as ak
 from datetime import datetime, timedelta
 import pandas as pd
+import random
 
 class Data():
     """
@@ -29,7 +30,12 @@ class Data():
         '''
         信息看板部分
         '''
-        st.title('数据看板')
+        st.title("数据看板")
+        ##TODO: 添加换一批按钮，目前仅随机打乱
+        if st.button("换一批"):
+            random.shuffle(Data.code) 
+            ## return 如果添加return按下按钮后就只剩下按钮了因为此函数已经结束了  
+        st.write("目前仅随机打乱内部列表")
         row1 = st.columns(3)
         row2 = st.columns(3)
         row3 = st.columns(3)
