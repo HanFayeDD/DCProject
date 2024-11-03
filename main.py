@@ -5,6 +5,8 @@ from page3.mainpage3 import mainpage3
 from page4.mainpage4 import mainpage4
 from pyg.pyg import pygchat
 from pagetest.mainpagetest import mainpagetest 
+from sidechat.chat import chat
+
 
 st.set_page_config(page_title="Demov1", layout="wide")
 pg = st.navigation([
@@ -15,5 +17,7 @@ pg = st.navigation([
     st.Page(mainpage3, title="page3", icon="🥰"),
     st.Page(pygchat, title="use pygwalker", icon="✔️"),
 ])
+
+chat()
 
 pg.run()
