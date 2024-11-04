@@ -1,4 +1,17 @@
 import streamlit as st
+import akshare as ak
+import time
+
+def chat_ans(q:str):
+    res = ak.nlp_answer(question=q)
+    if upfile is not None:
+        res = f"🤖🤖echo file {upfile.name}" + res
+    return res
+
+def stream_data(w:str):
+    for ele in w:
+        yield ele
+        time.sleep(0.02)
 
 def chat():
     """
@@ -13,7 +26,7 @@ def chat():
         if len(st.session_state['messages']) > limitlength:
             st.session_state.messages = st.session_state.messages[-limitlength:]
             print("clear msg")
-        cont = st.container(height=700)
+        cont = st.container(height=500)
         for msg in st.session_state.messages:
             cont.chat_message(msg["role"]).write(msg["content"])
 
@@ -21,12 +34,9 @@ def chat():
         if prompt := st.chat_input():
             st.session_state.messages.append({"role": "user", "content": prompt})
             cont.chat_message("user").write(prompt)
-            if upfile:
-                msg = f"🤖🤖echo file {upfile.name}"
-            else:    
-                msg = f"🤖🤖echo chat {prompt}"
+            msg = chat_ans(prompt)
             st.session_state.messages.append({"role": "assistant", "content": msg})
-            cont.chat_message("assistant").write(msg)
+            cont.chat_message("assistant").write_stream(stream_data(msg))
         upfile = st.file_uploader("上传文件")
 
 limitlength = 50
