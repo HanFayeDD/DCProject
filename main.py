@@ -7,9 +7,12 @@ from pyg.pyg import pygchat
 from pagetest.mainpagetest import mainpagetest 
 from sidechat.chat import chat
 
+def welcome():
+    st.title("Welcome")
 
 st.set_page_config(page_title="Demov1", layout="wide")
 pg = st.navigation([
+    st.Page(welcome, title="Welcome", icon="🤗"),
     st.Page(mainpage4, title="page4", icon="🤔"),
     st.Page(mainpagetest, title="测试页", icon="🤗"),
     st.Page(mainpage1, title="page1", icon="🤓"),
