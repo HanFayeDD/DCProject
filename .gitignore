@@ -3,3 +3,6 @@
 *.csv
 *.xlsx
 t.py
+*.docx
+*.docm
+*.pdf
