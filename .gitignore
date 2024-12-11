@@ -7,3 +7,4 @@ t.py
 *.docm
 *.pdf
 aaa.png
+.streamlit

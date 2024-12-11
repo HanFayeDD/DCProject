@@ -6,7 +6,6 @@ from openai import OpenAI
 
 def chat_ans(q: str):
     global apikey, cont_below_key
-    print(apikey)
     if apikey is None:
         cont_below_key.warning("请先输入API Key", icon="⚠️")
         return None
@@ -35,10 +34,11 @@ def chat_ans(q: str):
             temperature=0.3,
         )
         res = completion.choices[0].message.content
+        return res
     except :
+        print("chat asn wrong")
         cont_below_key.warning("连接错误：请检查API Key是否正确", icon="⚠️")
         return None
-    return res
 
 def stream_data(w: str):
     for ele in w:
@@ -54,7 +54,7 @@ def getsummary():
     cont.chat_message("user").write("一键总结")
     q = sample_prompt+sample
     temp = chat_ans(q)
-    if temp in None:
+    if temp is None:
         return
     res = temp
     st.session_state.messages.append(
@@ -92,8 +92,8 @@ def chat():
     with st.sidebar:
         st.subheader("💬 Chatbot")
         
-        apikey = st.text_input("请输入kimi APIKEY", value=None, type="password")
-        print(apikey)
+        # apikey = st.text_input("请输入kimi APIKEY", value=None, type="password")
+ 
         cont_below_key = st.container()
         
         if "messages" not in st.session_state:
@@ -135,7 +135,7 @@ cont_below_key = None
 cont = None
 limitlength = 50
 upfile = None
-apikey = None
+apikey = st.secrets['kimi_api_key']
 sample_prompt = "请根据上传的文件，依据下述模板，生成一份关于该公司的投资建议。对于文件中未提供的数据或信息但模板中又需要的，可以自行在回答中省略该部分。模板如下："
 sample ='''
 当对前公司（替换为具体公司名）综述性的建议如下：
