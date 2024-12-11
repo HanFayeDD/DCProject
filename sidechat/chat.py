@@ -5,8 +5,11 @@ from openai import OpenAI
 
 
 def chat_ans(q: str):
-    global apikey
+    global apikey, cont_below_key
     print(apikey)
+    if apikey is None:
+        cont_below_key.warning("请先输入API Key", icon="⚠️")
+        return None
     client = OpenAI(
         api_key=apikey,
         base_url="https://api.moonshot.cn/v1",
@@ -23,14 +26,18 @@ def chat_ans(q: str):
         
         
     ## 提问文本    
-    msg.append({"role": "user", "content":f"{q}"})
-    
-    completion = client.chat.completions.create(
-        model="moonshot-v1-8k",
-        messages=msg,
-        temperature=0.3,
-    )
-    res = completion.choices[0].message.content
+    try:
+        msg.append({"role": "user", "content":f"{q}"})
+        
+        completion = client.chat.completions.create(
+            model="moonshot-v1-8k",
+            messages=msg,
+            temperature=0.3,
+        )
+        res = completion.choices[0].message.content
+    except :
+        cont_below_key.warning("连接错误：请检查API Key是否正确", icon="⚠️")
+        return None
     return res
 
 def stream_data(w: str):
@@ -46,11 +53,36 @@ def getsummary():
     st.session_state.messages.append({"role": "user", "content": "一键总结"})
     cont.chat_message("user").write("一键总结")
     q = sample_prompt+sample
-    res = chat_ans(q)
+    temp = chat_ans(q)
+    if temp in None:
+        return
+    res = temp
     st.session_state.messages.append(
                 {"role": "assistant", "content": res})
     cont.chat_message("assistant").write_stream(stream_data(res))
     return
+
+def pic_ocr():
+    global cont, cont_below_key, ocr_prompt
+    if upfile is None:
+        cont_below_key.warning("请先上传图片文件", icon="⚠️")
+        return
+    elif upfile.type not in ["image/jpeg", "image/png", "image/jpg"]:
+        cont_below_key.warning("请上传图片文件(jpeg/png/jpg)", icon="⚠️")
+        return
+    st.session_state.messages.append({"role": "user", "content": "图片表格提取"})
+    cont.chat_message("user").write("图片表格提取")
+    q = ocr_prompt
+    temp = chat_ans(q)
+    if temp is None:
+        return
+    else:
+        res = temp
+    st.session_state.messages.append(
+                {"role": "assistant", "content": res})
+    st.session_state.ocr_res = res
+    cont.chat_message("assistant").write_stream(stream_data(res))
+    return    
     
 def chat():
     """
@@ -60,13 +92,15 @@ def chat():
     with st.sidebar:
         st.subheader("💬 Chatbot")
         
-        apikey = st.text_input("请输入kimi APIKEY", value="", type="password")
+        apikey = st.text_input("请输入kimi APIKEY", value=None, type="password")
         print(apikey)
         cont_below_key = st.container()
         
         if "messages" not in st.session_state:
             st.session_state["messages"] = [
                 {"role": "assistant", "content": "How can I help you?"}]
+        if "ocr_res" not in st.session_state:
+            st.session_state["ocr_res"] = None
         if len(st.session_state['messages']) > limitlength:
             st.session_state.messages = st.session_state.messages[-limitlength:]
             print("clear msg")
@@ -75,18 +109,27 @@ def chat():
         for msg in st.session_state.messages:
             cont.chat_message(msg["role"]).write(msg["content"])
 
-        cols = st.columns(2)
+        cols = st.columns(3)
         cols[0].button("清空历史消息", on_click=lambda: st.session_state.messages.clear(), use_container_width=True)
         cols[1].button("一键总结", on_click=getsummary, use_container_width=True)
+        cols[2].button("图片表格提取", on_click=pic_ocr, use_container_width=True)
         if prompt := st.chat_input():
             st.session_state.messages.append(
                 {"role": "user", "content": prompt})
             cont.chat_message("user").write(prompt)
-            msg = chat_ans(prompt)
+            msg_temp = chat_ans(prompt)
+            if msg_temp is None:
+                return
+            msg = msg_temp
             st.session_state.messages.append(
                 {"role": "assistant", "content": msg})
             cont.chat_message("assistant").write_stream(stream_data(msg))
         upfile = st.file_uploader("上传文件")
+
+##有关图片识别
+### 提示词
+ocr_prompt = " 请根据上传的图片，提取表格。要求(1)单位仅仅在表头中体现；(2)对于高位数字，不需要用逗号来进行分隔位数；(3)表格返回格式为markdown；(4)在回答中只返回生成的markdown表格即可，不要有多余的语句"
+### 返回的markdown表格
 
 cont_below_key = None
 cont = None
