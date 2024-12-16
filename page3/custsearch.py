@@ -53,12 +53,6 @@ class CustSearch():
         cls.years.sort()
         category = cls.maindf['分类方向'].unique().tolist()
         print(category)
-        # cls.drawtimeline(category[0])
-        # pietabs = st.columns(2)
-        # for i in range(2):
-        #     with pietabs[i]:
-        #         st.subheader(category[i])
-        #         cls.drawtimeline(category[i])
         hang_num = math.ceil(len(category)/2)
         # pietabs = st.tabs(category)
         for i in range(hang_num):
@@ -97,10 +91,12 @@ class CustSearch():
                 continue
             data, danwei = CustSearch.get_danwei(data)
             print(data, danwei)
-            pie = (Pie()
-                .add(f'单位({danwei})', [list(z) for z in zip(cate, data)])
+            pie = (Pie(init_opts=opts.InitOpts(theme='shine'))
+                .add(f'单位({danwei})', [list(z) for z in zip(cate, data)],  radius=["35%", "75%"])
                 .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {d}%"))
-                .set_global_opts(title_opts=opts.TitleOpts(title=f"{groupby_name}"))
+                .set_global_opts(title_opts=opts.TitleOpts(title=f"{groupby_name}",pos_left='center',pos_bottom='center', 
+                                                           title_textstyle_opts=opts.TextStyleOpts(font_size=25)),
+                                 legend_opts=opts.LegendOpts(is_show=False))
                 )
             tl.add(pie, year)
         st_pyecharts(tl, height='450px')
