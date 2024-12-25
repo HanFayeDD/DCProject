@@ -13,11 +13,11 @@ def welcome():
 st.set_page_config(page_title="Demov1", layout="wide")
 pg = st.navigation([
     st.Page(welcome, title="Welcome", icon="🤗"),
-    st.Page(mainpage4, title="page4", icon="🤔"),
     st.Page(mainpagetest, title="测试页", icon="🤗"),
     st.Page(mainpage1, title="page1", icon="🤓"),
     st.Page(mainpage2, title="page2", icon="🥰"),
     st.Page(mainpage3, title="page3", icon="🥰"),
+    st.Page(mainpage4, title="page4", icon="🤔"),
     st.Page(pygchat, title="use pygwalker", icon="✔️"),
 ])
 

@@ -32,47 +32,53 @@ class CustSearch():
     def panel(cls):
         st.title('自定义查询')
         CustSearch.tarcode = st.text_input("输入查询代码", "000001")
+        
+        st.subheader("基本信息(page2重复)")
+        with st.expander("基本信息", expanded=False, icon="🚆"):  
+            CustSearch.show_base_info()
+        
         st.subheader("股票信息查询")
         temp = Data.get_data(CustSearch.tarcode)
         if temp is not None:
             CustSearch.tardf = temp
-            with st.expander("获取到的数据", expanded=True, icon="🚂"):
+            with st.expander("获取到的数据", expanded=False, icon="🚂"):
                 st.dataframe(CustSearch.tardf, use_container_width=True)
             CustSearch.draw()
         else:
             st.error('查询失败', icon="🚨")
+            
         st.subheader("主营构成")
         res = cls.getmaindf()
         if res == -1:
             st.error('查询失败', icon="🚨")
         else:
-            with st.expander("获取到的数据", expanded=True, icon="🚂"):
+            with st.expander("获取到的数据", expanded=False, icon="🚂"):
                 st.dataframe(CustSearch.maindf, use_container_width=True)
-        cls.years = cls.maindf['报告期'].unique().tolist()
-        cls.years = [ele for ele in cls.years if ele.endswith('年度')]
-        cls.years.sort()
-        category = cls.maindf['分类方向'].unique().tolist()
-        print(category)
-        hang_num = math.ceil(len(category)/2)
-        # pietabs = st.tabs(category)
-        for i in range(hang_num):
-            if 2*i + 1 == len(category):
-                cls.drawtimeline(category[-1])
-                break
-            pie_tabs = st.columns(2)
-            for j in range(2):
-                if(i*2+j >= len(category)):
+            cls.years = cls.maindf['报告期'].unique().tolist()
+            cls.years = [ele for ele in cls.years if ele.endswith('年度')]
+            cls.years.sort()
+            category = cls.maindf['分类方向'].unique().tolist()
+            print(category)
+            hang_num = math.ceil(len(category)/2)
+            # pietabs = st.tabs(category)
+            for i in range(hang_num):
+                if 2*i + 1 == len(category):
+                    cls.drawtimeline(category[-1])
                     break
-                with pie_tabs[j]:
-                    cls.drawtimeline(category[i*2+j])
+                pie_tabs = st.columns(2)
+                for j in range(2):
+                    if(i*2+j >= len(category)):
+                        break
+                    with pie_tabs[j]:
+                        cls.drawtimeline(category[i*2+j])
         
     @classmethod
     def getmaindf(cls):
-        cls.maindf = ak.stock_zygc_ym(symbol=cls.tarcode)
-        if cls.maindf.shape[0] == 0:
-            return -1
-        else:
+        try:
+            cls.maindf = ak.stock_zygc_ym(symbol=cls.tarcode)
             return 0
+        except AttributeError:
+            return -1
 
     @classmethod
     def drawtimeline(cls, groupby_name: str):
@@ -154,3 +160,15 @@ class CustSearch():
             color='率'
         )
         cols[3].altair_chart(c1, use_container_width=False)
+
+    @classmethod
+    def show_base_info(cls):
+        info_df = ak.stock_profile_cninfo(symbol=cls.tarcode)
+        if info_df.shape[0] == 0:
+            st.error(f'{cls.tarcode}代码不存在', icon="🚨")
+            return
+        len = info_df.shape[1]
+        for i in range(len):
+            if info_df.iloc[0, i] is None:
+                continue
+            st.write(info_df.columns[i], info_df.iloc[0, i])

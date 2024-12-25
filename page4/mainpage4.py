@@ -25,7 +25,7 @@ def mainpage4():
     
 def use_pygwalker():
     st.subheader("pygwalker")
-    pyg = StreamlitRenderer(df, theme_key='streamlit')
+    pyg = StreamlitRenderer(df, theme_key='streamlit', appearance='light')
     pyg.explorer()
     
 def get_md_text():
