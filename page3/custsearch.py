@@ -73,10 +73,14 @@ class CustSearch():
                         cls.drawtimeline(category[i*2+j])
         
     @classmethod
+    # 定义一个类方法，用于获取主数据框
     def getmaindf(cls):
+        # 尝试获取主数据框
         try:
             cls.maindf = ak.stock_zygc_ym(symbol=cls.tarcode)
+            # 如果成功获取，返回0
             return 0
+        # 如果获取失败，返回-1
         except AttributeError:
             return -1
 
